@@ -88,9 +88,9 @@ elsif (RUBY_PLATFORM =~ /solaris/i)
         DOWNLOADLINK = "http://public.dhe.ibm.com/ibmdl/export/pub/software/data/db2/drivers/odbc_cli/sunamd32_odbc_cli.tar.gz"
   end
 elsif (RUBY_PLATFORM =~ /darwin/i)
-  if(is64Bit) 
+  if(is64Bit)
         puts "Detected platform - MacOS darwin64"
-        DOWNLOADLINK = "http://public.dhe.ibm.com/ibmdl/export/pub/software/data/db2/drivers/odbc_cli/macos64_odbc_cli.tar.gz"			
+        DOWNLOADLINK = "http://public.dhe.ibm.com/ibmdl/export/pub/software/data/db2/drivers/odbc_cli/macos64_odbc_cli.tar.gz"
   else
         puts "Mac OS 32 bit not supported. Please use an x64 architecture."
   end
@@ -149,19 +149,19 @@ end
 if(IBM_DB_HOME == nil || IBM_DB_HOME == '')
   IBM_DB_INCLUDE = ENV['IBM_DB_INCLUDE']
   IBM_DB_LIB = ENV['IBM_DB_LIB']
-  
+
   if( ( (IBM_DB_INCLUDE.nil?) || (IBM_DB_LIB.nil?) ) ||
       ( IBM_DB_INCLUDE == '' || IBM_DB_LIB == '' )
 	)
 	if(!DOWNLOADLINK.nil? && !DOWNLOADLINK.empty?)
 		puts "Environment variable IBM_DB_HOME is not set. Downloading and setting up the DB2 client driver\n"
 		destination = "#{File.expand_path(File.dirname(File.dirname(__FILE__)))}/../lib"
-	
+
 		archive = downloadCLIPackage(destination)
 		untarCLIPackage(archive,destination)
-	
+
 		IBM_DB_HOME="#{destination}/clidriver"
-	
+
 		IBM_DB_INCLUDE = "#{IBM_DB_HOME}/include"
 		IBM_DB_LIB="#{IBM_DB_HOME}/lib"
 	else
@@ -171,7 +171,7 @@ if(IBM_DB_HOME == nil || IBM_DB_HOME == '')
   end
 else
   IBM_DB_INCLUDE = "#{IBM_DB_HOME}/include"
-  
+
   if(is64Bit)
     IBM_DB_LIB="#{IBM_DB_HOME}/lib64"
   else
@@ -186,14 +186,14 @@ if( !(File.directory?(IBM_DB_LIB)) )
 	exit 1
   end
   notifyString  = "Detected usage of IBM Data Server Driver package. Ensure you have downloaded "
-  
+
   if(is64Bit)
     notifyString = notifyString + "64-bit package "
   else
     notifyString = notifyString + "32-bit package "
   end
   notifyString = notifyString + "of IBM_Data_Server_Driver and retry the 'gem install ibm_db' command\n "
-  
+
   puts notifyString
 end
 
@@ -213,7 +213,7 @@ end
 
 if( RUBY_VERSION =~ /1.9/ || RUBY_VERSION =~ /2./)
   create_header('gil_release_version')
-  create_header('unicode_support_version')
+  #create_header('unicode_support_version')
 end
 
 unless (have_library(WIN ? 'db2cli' : 'db2','SQLConnect') or find_library(WIN ? 'db2cli' : 'db2','SQLConnect', IBM_DB_LIB))
@@ -225,13 +225,13 @@ Follow the steps below and retry
 Step 1: - Install IBM DB2 Universal Database Server/Client
 
 step 2: - Set the environment variable IBM_DB_HOME as below
-        
+
              (assuming bash shell)
-        
+
              export IBM_DB_HOME=<DB2/IBM_Data_Server_Driver installation directory> #(Eg: export IBM_DB_HOME=/opt/ibm/db2/v10)
 
 step 3: - Retry gem install
-        
+
 EOL
 end
 
@@ -242,8 +242,8 @@ end
 alias :libpathflag0 :libpathflag
 def libpathflag(libpath)
 	if(RUBY_PLATFORM =~ /darwin/i)
-		if(RUBY_VERSION =~ /2./)	
-			libpathflag0 + case RbConfig::CONFIG["arch"]	
+		if(RUBY_VERSION =~ /2./)
+			libpathflag0 + case RbConfig::CONFIG["arch"]
 			when /solaris2/
 			  libpath[0..-2].map {|path| " -R#{path}"}.join
 			when /linux/
@@ -252,7 +252,7 @@ def libpathflag(libpath)
 			  ""
 		    end
 		else
-			libpathflag0 + case Config::CONFIG["arch"]				
+			libpathflag0 + case Config::CONFIG["arch"]
 			when /solaris2/
 			  libpath[0..-2].map {|path| " -R#{path}"}.join
 			when /linux/
@@ -260,10 +260,10 @@ def libpathflag(libpath)
 			else
 			  ""
 			end
-		end  
+		end
 	else
-		if(RUBY_VERSION =~ /2./)	
-			ldflags =  case RbConfig::CONFIG["arch"]	
+		if(RUBY_VERSION =~ /2./)
+			ldflags =  case RbConfig::CONFIG["arch"]
 			when /solaris2/
 			  libpath[0..-2].map {|path| " -R#{path}"}.join
 			when /linux/
@@ -280,12 +280,12 @@ def libpathflag(libpath)
 			else
 			  ""
 		    end
-		end			
-		libpathflag0 + " '-Wl,-R$$ORIGIN/clidriver/lib' "		
+		end
+		libpathflag0 + " '-Wl,-R$$ORIGIN/clidriver/lib' "
 	end
 end
 
 have_header('gil_release_version')
-have_header('unicode_support_version')
+#have_header('unicode_support_version')
 
 create_makefile('ibm_db')
